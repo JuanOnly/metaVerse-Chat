@@ -29,7 +29,7 @@ function Message({ message }) {
         <p>{message.get("message")}</p>
       </div>
 
-      {/**Time ago stamp */}
+      {/**Timeago stamp */}
       <TimeAgo
         className={`text-[10px] italic text-gray-400 ${
           isUserMessage && "order-first pr-1"
