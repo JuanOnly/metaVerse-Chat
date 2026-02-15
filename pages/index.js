@@ -21,7 +21,9 @@ export default function Home() {
         <Messages />
       </div>
 
-      <button onClick={logout}></button>
+      <a href="/about" className="fixed bottom-5 right-5 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-full text-sm z-50">
+        About
+      </a>
     </div>
   );
 }
