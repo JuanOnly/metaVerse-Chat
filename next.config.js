@@ -1,5 +1,8 @@
 module.exports = {
   images: {
-    domains: ["avatars.dicebear.com", "links.papareact.com"],
+    remotePatterns: [
+      { hostname: "avatars.dicebear.com" },
+      { hostname: "links.papareact.com" },
+    ],
   },
 };
