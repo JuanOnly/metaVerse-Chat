@@ -47,14 +47,15 @@ export default function Home() {
       
       // If not found or it's a name search
       if (!collection) {
-        const results = await searchCollections(inputValue);
+        // Try alternative search with different query format
+        const results = await searchCollections(inputValue.trim().toLowerCase());
         if (results.length > 0) {
           collection = results[0];
         }
       }
-      
+
       if (!collection) {
-        setError('Collection not found. Try a different search.');
+        setError('Collection not found. The API may be rate-limited. Try again in a moment or search for a popular collection like "bored ape".');
         setIsLoadingNFTs(false);
         return;
       }

@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-const RESERVOIR_API_BASE = 'https://api.reservoir.tools';
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_URL || 'https://api.reservoir.tools';
 
 const reservoirApi = axios.create({
   baseURL: RESERVOIR_API_BASE,
   headers: {
     'Content-Type': 'application/json',
+    'x-api-key': process.env.NEXT_PUBLIC_RESERVOIR_API_KEY || '',
   },
 });
 
@@ -47,9 +48,13 @@ export async function searchCollections(query: string): Promise<Collection[]> {
         limit: 10,
       },
     });
-    return response.data.collections || [];
-  } catch (error) {
-    console.error('Error searching collections:', error);
+    
+    if (response.data.collections) {
+      return response.data.collections;
+    }
+    return [];
+  } catch (error: any) {
+    console.error('Error searching collections:', error?.response?.data || error?.message || error);
     return [];
   }
 }
@@ -63,50 +68,9 @@ export async function getCollection(contract: string, chain = 'ethereum'): Promi
       },
     });
     return response.data.collections?.[0] || null;
-  } catch (error) {
-    console.error('Error fetching collection:', error);
+  } catch (error: any) {
+    console.error('Error fetching collection:', error?.response?.data || error?.message || error);
     return null;
-  }
-}
-
-export async function getCollectionTraits(
-  contract: string,
-  chain = 'ethereum'
-): Promise<Trait[]> {
-  try {
-    const response = await reservoirApi.get(`/collections/v5`, {
-      params: {
-        contract: contract,
-        includeTraits: true,
-      },
-    });
-    
-    const collection = response.data.collections?.[0];
-    if (!collection?.traits) return [];
-    
-    const traitCounts: Record<string, Record<string, number>> = {};
-    const totalTokens = collection.totalCount || 1;
-    
-    for (const trait of collection.traits) {
-      if (!traitCounts[trait.key]) {
-        traitCounts[trait.key] = {};
-      }
-      traitCounts[trait.key][trait.value] = trait.tokenCount || 0;
-    }
-    
-    const traits: Trait[] = [];
-    for (const trait of collection.traits) {
-      traits.push({
-        type: trait.key,
-        value: trait.value,
-        count: trait.tokenCount || 0,
-      });
-    }
-    
-    return traits;
-  } catch (error) {
-    console.error('Error fetching traits:', error);
-    return [];
   }
 }
 
@@ -146,8 +110,8 @@ export async function getNFTs(
       nfts,
       cursor: response.data.continuation,
     };
-  } catch (error) {
-    console.error('Error fetching NFTs:', error);
+  } catch (error: any) {
+    console.error('Error fetching NFTs:', error?.response?.data || error?.message || error);
     return { nfts: [] };
   }
 }
@@ -184,8 +148,8 @@ export async function getNFTDetails(
       floorAskPrice: token.price?.floorAskPrice,
       owner: token.owner,
     };
-  } catch (error) {
-    console.error('Error fetching NFT details:', error);
+  } catch (error: any) {
+    console.error('Error fetching NFT details:', error?.response?.data || error?.message || error);
     return null;
   }
 }
